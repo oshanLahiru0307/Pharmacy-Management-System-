@@ -269,6 +269,38 @@ async def delete_supplier(supplier_id: str):
     return await forward_request("supplier", f"/suppliers/{supplier_id}", "DELETE")
 
 
+# Medicine Management Service Routes — forwards to Medicine_Service (localhost:8003) /medicines
+@app.get("/gateway/medicines")
+async def get_all_medicines():
+    """Get all medicines through gateway"""
+    return await forward_request("medicine", "/medicines", "GET")
+
+
+@app.get("/gateway/medicines/{medicine_id}")
+async def get_medicine(medicine_id: str):
+    """Get a medicine by ID through gateway"""
+    return await forward_request("medicine", f"/medicines/{medicine_id}", "GET")
+
+
+@app.post("/gateway/medicines")
+async def create_medicine(medicine: Medicine):
+    """Create a new medicine through gateway"""
+    return await forward_request("medicine", "/medicines", "POST", json=medicine.model_dump())
+
+
+@app.put("/gateway/medicines/{medicine_id}")
+async def update_medicine(medicine_id: str, medicine: UpdateMedicine):
+    """Update a supplier through gateway"""
+    body = medicine.model_dump(exclude_none=True)
+    return await forward_request("medicine", f"/medicines/{medicine_id}", "PUT", json=body)
+
+
+@app.delete("/gateway/medicines/{medicine_id}")
+async def delete_medicine(medicine_id: str):
+    """Delete a customer through gateway"""
+    return await forward_request("medicine", f"/medicines/{medicine_id}", "DELETE")
+
+
 
 if __name__ == "__main__":
     import uvicorn
