@@ -371,6 +371,38 @@ async def delete_prescription(prescription_id: str):
     return await forward_request("prescription", f"/prescriptions/{prescription_id}", "DELETE")
 
 
+# Order Management Service Routes — forwards to Medicine_Service (localhost:8003) /medicines
+@app.get("/gateway/orders")
+async def get_all_orders():
+    """Get all Orders through gateway"""
+    return await forward_request("order", "/orders", "GET")
+
+
+@app.get("/gateway/orders/{order_id}")
+async def get_order(order_id: str):
+    """Get a order by ID through gateway"""
+    return await forward_request("order", f"/orders/{order_id}", "GET")
+
+
+@app.post("/gateway/orders")
+async def create_order(order: CreateOrder):
+    """Create a new order through gateway"""
+    return await forward_request("order", "/orders", "POST", json=order.model_dump())
+
+
+@app.put("/gateway/orders/{order_id}")
+async def update_order(order_id: str, order: UpdateOrder):
+    """Update a order through gateway"""
+    body = order.model_dump(exclude_none=True)
+    return await forward_request("order", f"/orders/{order_id}", "PUT", json=body)
+
+
+@app.delete("/gateway/orders/{order_id}")
+async def delete_order(order_id: str):
+    """Delete a order through gateway"""
+    return await forward_request("order", f"/orders/{order_id}", "DELETE")
+
+
 
 if __name__ == "__main__":
     import uvicorn
