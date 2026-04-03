@@ -171,7 +171,7 @@ Start each microservice in separate terminals:
 | 📄 Prescription      | http://127.0.0.1:8005/docs   |
 | 🛒 Order             | http://127.0.0.1:8006/docs   |
 | 💳 Payment           | http://127.0.0.1:8007/docs   |
-| 👤 Auth         | http://127.0.0.1:8001/docs   |
+| 👤 Auth         | http://127.0.0.1:8008/docs   |
 
 ---
 
