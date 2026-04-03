@@ -339,6 +339,38 @@ async def delete_medicine(item_id: str):
     return await forward_request("inventory", f"/inventries/{item_id}", "DELETE")
 
 
+# Presccription Management Service Routes — forwards to Medicine_Service (localhost:8003) /medicines
+@app.get("/gateway/prescriptions")
+async def get_all_prescriptions():
+    """Get all inventory items through gateway"""
+    return await forward_request("prescription", "/prescriptions", "GET")
+
+
+@app.get("/gateway/prescriptions/{prescription_id}")
+async def get_prescription(prescription_id: str):
+    """Get a prescription by ID through gateway"""
+    return await forward_request("prescription", f"/prescriptions/{prescription_id}", "GET")
+
+
+@app.post("/gateway/prescriptions")
+async def create_prescription(prescription: CreatePrescription):
+    """Create a new prescription  through gateway"""
+    return await forward_request("prescription", "/prescriptions", "POST", json=prescription.model_dump())
+
+
+@app.put("/gateway/prescriptions/{prescription_id}")
+async def update_prescription(prescription_id: str, prescription: UpdatePrescription):
+    """Update a prescription through gateway"""
+    body = prescription.model_dump(exclude_none=True)
+    return await forward_request("prescription", f"/prescriptions/{prescription_id}", "PUT", json=body)
+
+
+@app.delete("/gateway/prescriptions/{prescription_id}")
+async def delete_prescription(prescription_id: str):
+    """Delete a prescription through gateway"""
+    return await forward_request("prescription", f"/prescriptions/{prescription_id}", "DELETE")
+
+
 
 if __name__ == "__main__":
     import uvicorn
