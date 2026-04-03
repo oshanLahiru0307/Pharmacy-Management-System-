@@ -237,6 +237,39 @@ async def delete_customer(customer_id: str):
     return await forward_request("customer", f"/customers/{customer_id}", "DELETE")
 
 
+# Supplier Service Routes — forwards to Supplier_Service (localhost:8002) /suppliers
+@app.get("/gateway/suppliers")
+async def get_all_suppliers():
+    """Get all suppliers through gateway"""
+    return await forward_request("supplier", "/suppliers", "GET")
+
+
+@app.get("/gateway/suppliers/{supplier_id}")
+async def get_supplier(supplier_id: str):
+    """Get a supplier by ID through gateway"""
+    return await forward_request("supplier", f"/suppliers/{supplier_id}", "GET")
+
+
+@app.post("/gateway/suppliers")
+async def create_supplier(supplier: Supplier):
+    """Create a new supplier through gateway"""
+    return await forward_request("supplier", "/suppsliers", "POST", json=supplier.model_dump())
+
+
+@app.put("/gateway/suppliers/{supplier_id}")
+async def update_supplier(supplier_id: str, supplier: UpdateSupplier):
+    """Update a supplier through gateway"""
+    body = supplier.model_dump(exclude_none=True)
+    return await forward_request("supplier", f"/suppliers/{supplier_id}", "PUT", json=body)
+
+
+@app.delete("/gateway/suppliers/{supplier_id}")
+async def delete_supplier(supplier_id: str):
+    """Delete a customer through gateway"""
+    return await forward_request("supplier", f"/suppliers/{supplier_id}", "DELETE")
+
+
+
 if __name__ == "__main__":
     import uvicorn
 
