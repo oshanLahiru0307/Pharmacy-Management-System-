@@ -301,6 +301,44 @@ async def delete_medicine(medicine_id: str):
     return await forward_request("medicine", f"/medicines/{medicine_id}", "DELETE")
 
 
+# Inventory Management Service Routes — forwards to Medicine_Service (localhost:8003) /medicines
+@app.get("/gateway/inventries")
+async def get_all_inventoryItems():
+    """Get all inventory items through gateway"""
+    return await forward_request("inventory", "/inventories", "GET")
+
+
+@app.get("/gateway/inventries/{item_id}")
+async def get_item(item_id: str):
+    """Get a inventory item by ID through gateway"""
+    return await forward_request("inventory", f"/inventries/{item_id}", "GET")
+
+
+@app.get("/gateway/inventries/{itemName}")
+async def get_item(itemName: str):
+    """Get a inventory item by item name through gateway"""
+    return await forward_request("inventory", f"/inventries/itemName/{itemName}", "GET")
+
+
+@app.post("/gateway/inventries")
+async def create_medicine(inventory: Inventory):
+    """Create a new inventory item  through gateway"""
+    return await forward_request("inventory", "/inventries", "POST", json=inventory.model_dump())
+
+
+@app.put("/gateway/inventries/{item_id}")
+async def update_medicine(item_id: str, inventoy: UpdateInventory):
+    """Update a inventory item through gateway"""
+    body = inventory.model_dump(exclude_none=True)
+    return await forward_request("inventory", f"/inventries/{item_id}", "PUT", json=body)
+
+
+@app.delete("/gateway/inventries/{item_id}")
+async def delete_medicine(item_id: str):
+    """Delete a inventory item through gateway"""
+    return await forward_request("inventory", f"/inventries/{item_id}", "DELETE")
+
+
 
 if __name__ == "__main__":
     import uvicorn
