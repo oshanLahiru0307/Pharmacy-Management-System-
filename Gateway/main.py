@@ -403,6 +403,39 @@ async def delete_order(order_id: str):
     return await forward_request("order", f"/orders/{order_id}", "DELETE")
 
 
+# payments Management Service Routes — forwards to Medicine_Service (localhost:8003) /medicines
+@app.get("/gateway/payments")
+async def get_all_payments():
+    """Get all payments through gateway"""
+    return await forward_request("payment", "/payments", "GET")
+
+
+@app.get("/gateway/payments/{payment_id}")
+async def get_payment(payment_id: str):
+    """Get a payment by ID through gateway"""
+    return await forward_request("payment", f"/payments/{payment_id}", "GET")
+
+
+@app.post("/gateway/payments")
+async def create_payments(payment: CreatePayment):
+    """Create a new payment through gateway"""
+    return await forward_request("payment", "/payments", "POST", json=payment.model_dump())
+
+
+@app.put("/gateway/payments/{payment_id}")
+async def update_payment(payment_id: str, payment: UpdatePayment):
+    """Update a payment through gateway"""
+    body = payment.model_dump(exclude_none=True)
+    return await forward_request("payment", f"/payments/{payment_id}", "PUT", json=body)
+
+
+@app.delete("/gateway/payments/{payment_id}")
+async def delete_payment(payment_id: str):
+    """Delete a payment through gateway"""
+    return await forward_request("payment", f"/payments/{payment_id}", "DELETE")
+
+
+
 
 if __name__ == "__main__":
     import uvicorn
