@@ -130,3 +130,16 @@ class UpdatePayment(BaseModel):
     notes: Optional[str] = None
     created_at: datetime
     updated_at: datetime
+
+# User Register
+class UserRegister(BaseModel):
+    name: str
+    email: EmailStr
+    password: str = Field(..., min_length=6)
+
+
+# User Login
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+

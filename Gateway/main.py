@@ -1,12 +1,12 @@
 # gateway/main.py
-from fastapi import FastAPI, HTTPException, Request, status
+from fastapi import Body, FastAPI, HTTPException, Request, status
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, EmailStr
 import httpx
 from typing import Any
 import logging
-from models import Customer, UpdateCustomer, Supplier, UpdateSupplier, Medicine, UpdateMedicine, Inventory, UpdateInventory, CreatePrescription, UpdatePrescription, CreateOrder, UpdateOrder, CreatePayment, UpdatePayment
+from models import Customer, UpdateCustomer, Supplier, UpdateSupplier, Medicine, UpdateMedicine, Inventory, UpdateInventory, CreatePrescription, UpdatePrescription, CreateOrder, UpdateOrder, CreatePayment, UpdatePayment, UserRegister, UserLogin
 from fastapi import Depends, Security
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import jwt, JWTError
@@ -21,7 +21,8 @@ SERVICES = {
     "inventory": "http://localhost:8004",
     "prescription": "http://localhost:8005",
     "order": "http://localhost:8006",
-    "payment": "http://localhost:8007"
+    "payment": "http://localhost:8007",
+    "auth": "http://localhost:8008",
 }
 
 class ErrorResponse(BaseModel):
@@ -41,6 +42,8 @@ PUBLIC_PATHS = {
     "/docs",
     "/openapi.json",
     "/redoc",
+    "/gateway/auth/register",
+    "/gateway/auth/login",
 }
 
 def verify_token(
@@ -205,6 +208,17 @@ def read_root():
         "version": "1.0.0"
     }
 
+# Auth Service Routes — forwards to Auth_Service (localhost:8008)
+@app.post("/gateway/auth/register")
+async def gateway_register(user: UserRegister):
+    return await forward_request("auth", "/register", "POST", json=user)
+
+
+@app.post("/gateway/auth/login")
+async def gateway_login(user: UserLogin):
+    return await forward_request("auth", "/login", "POST", json=UserLogin)
+
+
 # Customer Service Routes — forwards to Customer_Service (localhost:8001) /customers
 @app.get("/gateway/customers")
 async def get_all_customers():
@@ -236,7 +250,7 @@ async def delete_customer(customer_id: str):
     """Delete a customer through gateway"""
     return await forward_request("customer", f"/customers/{customer_id}", "DELETE")
 
-
+    
 # Supplier Service Routes — forwards to Supplier_Service (localhost:8002) /suppliers
 @app.get("/gateway/suppliers")
 async def get_all_suppliers():
@@ -267,7 +281,6 @@ async def update_supplier(supplier_id: str, supplier: UpdateSupplier):
 async def delete_supplier(supplier_id: str):
     """Delete a customer through gateway"""
     return await forward_request("supplier", f"/suppliers/{supplier_id}", "DELETE")
-
 
 # Medicine Management Service Routes — forwards to Medicine_Service (localhost:8003) /medicines
 @app.get("/gateway/medicines")
@@ -329,7 +342,7 @@ async def create_medicine(inventory: Inventory):
 @app.put("/gateway/inventries/{item_id}")
 async def update_medicine(item_id: str, inventoy: UpdateInventory):
     """Update a inventory item through gateway"""
-    body = inventory.model_dump(exclude_none=True)
+    body = inventoy.model_dump(exclude_none=True)
     return await forward_request("inventory", f"/inventries/{item_id}", "PUT", json=body)
 
 
@@ -402,7 +415,6 @@ async def delete_order(order_id: str):
     """Delete a order through gateway"""
     return await forward_request("order", f"/orders/{order_id}", "DELETE")
 
-
 # payments Management Service Routes — forwards to Medicine_Service (localhost:8003) /medicines
 @app.get("/gateway/payments")
 async def get_all_payments():
@@ -433,8 +445,6 @@ async def update_payment(payment_id: str, payment: UpdatePayment):
 async def delete_payment(payment_id: str):
     """Delete a payment through gateway"""
     return await forward_request("payment", f"/payments/{payment_id}", "DELETE")
-
-
 
 
 if __name__ == "__main__":
