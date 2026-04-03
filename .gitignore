@@ -35,8 +35,6 @@ venv.bak/
 .env.local
 .env.*.local
 *.env
-Payment_Service/.env
-Presentation_Service/.env
 
 # IDE - VSCode
 .vscode/
